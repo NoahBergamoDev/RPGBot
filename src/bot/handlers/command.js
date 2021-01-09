@@ -4,7 +4,7 @@ const ascii = require("ascii-table"); //requiring ascii-table which is a great t
 let table = new ascii("Commands"); //creating a new table with the name "Commands"
 table.setHeading("Command", "Load status");
 
-console.log("Welcome to SERVICE HANDLER"); //logging that it loades
+console.log("Welcome to RPG Bot"); //logging that it loades
 
 module.exports = (client) => {
   readdirSync("./src/bot/commands/").forEach((dir) => {

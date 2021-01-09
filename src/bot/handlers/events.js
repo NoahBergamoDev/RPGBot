@@ -4,7 +4,7 @@ const ascii = require("ascii-table"); //requiring ascii-table which is a great t
 let table = new ascii("Events"); //creating a new table with the name "Commands"
 table.setHeading("Events", "Load status");
 
-module.exports = async (client) => {
+module.exports = async (client, controllers) => {
   let theevents; //global variable
   fs.readdirSync("./src/bot/events/").forEach((file) => {
     //reading each command
@@ -17,7 +17,7 @@ module.exports = async (client) => {
       const event = require(`../events/${file}`); //create the event from the filename
       let eventName = file.split(".")[0]; //get the eventname from it
       theevents = eventName; //set it into the global variable
-      client.on(eventName, event.bind(null, client)); //LOAD THE EVENT
+      client.on(eventName, event.bind(null, client, controllers)); //LOAD THE EVENT
     });
   });
 
@@ -30,5 +30,4 @@ module.exports = async (client) => {
     }
   }
   console.log(table.toString()); //showing the table
-  console.log("Logging into the BOT..."); //showing loading status
 };

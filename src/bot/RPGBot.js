@@ -13,7 +13,8 @@ const setupBot = (client, controllers) => {
     require(`./handlers/command`)(client);
   }); //this is for command loading in the handler file, one fireing for each cmd
   const eventhandler = require("./handlers/events");
-  eventhandler(client); //this is for event handling
+  eventhandler(client, controllers); //this is for event handling
+
 };
 const messageHandler = (client, controllers) => {
   const cooldowns = new Collection(); //an collection for cooldown commands of each user
