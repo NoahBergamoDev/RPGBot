@@ -7,6 +7,7 @@ module.exports = class Database {
   connectDatabase = async () => {
     try {
       mongoose.Promise = global.Promise;
+      
       mongoose
         .connect(config.databaseClientUri, {
           useNewUrlParser: true,
