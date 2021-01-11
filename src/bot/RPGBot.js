@@ -14,13 +14,13 @@ const setupBot = (client, controllers) => {
   }); //this is for command loading in the handler file, one fireing for each cmd
   const eventhandler = require("./handlers/events");
   eventhandler(client, controllers); //this is for event handling
-
 };
 const messageHandler = (client, controllers) => {
   const cooldowns = new Collection(); //an collection for cooldown commands of each user
 
   //fires each time the bot receives a message
   client.on("message", async (message) => {
+    const contr = controllers;
     if (message.author.bot) return; // if the message  author is a bot, return aka ignore the inputs
     if (!message.guild) return; //if the message is not in a guild (aka in dms), return aka ignore the inputs
 
@@ -75,10 +75,10 @@ const messageHandler = (client, controllers) => {
           client,
           message,
           args,
-          message.user,
+          message.author,
           args.join(" "),
           prefix,
-          controllers
+          contr
         ); //run the command with the parameters:  client, message, args, user, text, prefix and data controllers;
       } catch (error) {
         console.log(error);
