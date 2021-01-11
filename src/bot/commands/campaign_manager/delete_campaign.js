@@ -7,18 +7,18 @@ module.exports = {
   cooldown: 2,
   usage: "delete_campaign <campaign name>",
 
-  run: async (client, message, args, user, text, prefix, campaignManager) => {
-    //TODO: ACTUALLY DELETE THE CAMPAIGN FROM DATABASE.
+  run: async (client, message, args, user, text, prefix, controllers) => {
+    if (!text || text.length === 0) {
+      return;
+    }
+    const { campaignController } = controllers;
     let server = message.guild;
-    const categoryName = `Campaign - ${text}`;
-    const roleName = `DM (${text})`;
+    const categoryName = `campaign - ${text.toLowerCase()}`;
+    const dmRoleName = `dm (${text.toLowerCase()})`;
+    const playerRoleName = `player (${text.toLowerCase()})`;
 
-    const campaign = campaignManager.campaigns.find((camp) => {
-      return (
-        camp.title.toLowerCase() === text.toLowerCase() &&
-        camp.createdBy === user.id
-      );
-    });
+    const campaign = await campaignController.findCampaignByTitle(text, user);
+
     if (!campaign) {
       message.reply(
         `There's no campaign with the name of "${text}" associated to your username.`
@@ -27,23 +27,29 @@ module.exports = {
       return;
     }
     const channel = server.channels.cache.find(
-      (channel) => channel.name.toLowerCase() === categoryName.toLowerCase()
+      (channel) => channel.name.toLowerCase() === categoryName
     );
     if (!channel) {
       message.reply(`There's no channel with name of "${text}"`);
       return;
     }
+    //Delete Campaign---------
+    campaignController.deleteCampaign(campaign);
+
+    //Delete Roles------------
     server.roles.cache
-      .find((role) => role.name.toLowerCase() === roleName.toLowerCase())
+      .find((role) => role.name.toLowerCase() === dmRoleName)
       .delete();
+    server.roles.cache
+      .find((role) => role.name.toLowerCase() === playerRoleName)
+      .delete();
+    //Delete Channels---------
     channel.children.forEach((ch) => ch.delete());
+    //Delete Category---------
     channel.delete();
-    campaignManager.deleteCampaign(text);
-    message
-      .reply(
-        `Campaign ${text} deleted. Total of ${campaignManager.campaigns.length} campaigns.`
-      )
-      .then((msg) => msg.delete({ timeout: 10000 }));
-    message.delete();
+
+    message.reply(`Campaign ${text} deleted.`);
+    // .then((msg) => msg.delete({ timeout: 10000 }));
+    // message.delete();
   },
 };
