@@ -9,18 +9,18 @@ module.exports = {
   run: async (client, message, args, user, text, prefix, controllers) => {
     message.guild.channels.cache.map((c) => {
       if (
-        c.name.toLowerCase() === "general" ||
-        c.name.toLowerCase() === "rolls" ||
-        c.name.toLowerCase() === "session-0" ||
-        c.name.toLowerCase() === "session 0" ||
-        c.name.toLowerCase() === "off-topic" ||
-        c.name.toLowerCase() === "campaign-related-chat" ||
-        c.name.toLowerCase() === "schedule" ||
-        c.name.toLowerCase() === "announcements" ||
-        c.name.toLowerCase() === "private encounter" ||
-        c.name.toLowerCase() === "private-notes" ||
-        c.name.toLowerCase() === "dm-commands" ||
-        c.name.startsWith("Campaign -")
+        c.name.toLowerCase().includes("general") ||
+        c.name.toLowerCase().includes("rolls") ||
+        c.name.toLowerCase().includes("session-0") ||
+        c.name.toLowerCase().includes("session 0") ||
+        c.name.toLowerCase().includes("off-topic") ||
+        c.name.toLowerCase().includes("campaign-related-chat") ||
+        c.name.toLowerCase().includes("schedule") ||
+        c.name.toLowerCase().includes("announcements") ||
+        c.name.toLowerCase().includes("private encounter") ||
+        c.name.toLowerCase().includes("private-notes") ||
+        c.name.toLowerCase().includes("dm-commands") ||
+        c.name.toLowerCase().includes("campaign -")
       ) {
         c.delete();
       }

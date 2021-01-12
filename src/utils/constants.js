@@ -1,6 +1,40 @@
 // const RuleSystem = require("../models/RuleSystem");
 // const Attribute = require("../models/Attribute");
 
+
+const channelsModelList = [
+  {
+    title: "📆schedule", options: { type: "text" }
+  },
+  {
+    title: "🚨announcements", options: { type: "text", }
+  },
+  {
+    title: "🚀off-topic", options: { type: "text" }
+  },
+  {
+    title: "🏰campaign-related-chat", options: { type: "text" }
+  },
+  {
+    title: "🔷session-0", options: { type: "text" }
+  },
+  {
+    title: "🎲rolls", options: { type: "text" }
+  },
+  {
+    title: "🔧dm-commands", options: { type: "text" }
+  },
+  {
+    title: "📓private-notes", options: { type: "text" }
+  },
+  {
+    title: "🔷 Session 0", options: { type: "voice" }
+  },
+  {
+    title: "🔥 Private encounter", options: { type: "voice" }
+  },
+]
+
 const Dices = {
   D4: 0,
   D6: 1,
@@ -48,6 +82,7 @@ const SessionFrequency = {
 };
 
 module.exports = Object.freeze({
+  ChannelsModelList: channelsModelList,
   DICES: Dices,
   ATTACK_ROLL_TYPE: AttackRollType,
   ATTRIBUTE_ROLL_TYPE: AttributeRollType,

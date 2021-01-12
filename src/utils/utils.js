@@ -11,6 +11,9 @@ module.exports = {
       },
     });
   },
+  createChannel: async (server, channel) => {
+    return await server.channels.create(channel.title, channel.options);
+  },
   timedReply: async (message, reply, timeout) => {
     message.reply(reply).then((msg) => msg.delete({ timeout }));
     message.delete({ timeout });

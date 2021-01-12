@@ -8,6 +8,10 @@ module.exports = {
   usage: "delete_campaign>",
 
   run: async (client, message, args, user, text, prefix, controllers) => {
+    if (!message.channel.name.toLowerCase().includes("dm-commands")) {
+      message.reply(`I'm sorry. I don't know about what campaign you are refering to. Use this command on the "dm-commands" channel, inside the campaign you want to delete.`);
+      return;
+    }
     const campaignName = message.channel.parent.name.split("-")[1].trim();
     const filter = (m) => m.author.id === message.author.id;
 
@@ -49,7 +53,7 @@ module.exports = {
               return;
             }
             const channel = server.channels.cache.find(
-              (channel) => channel.name.toLowerCase() === categoryName
+              (channel) => channel.name.toLowerCase().includes(categoryName)
             );
             if (!channel) {
               message.reply(

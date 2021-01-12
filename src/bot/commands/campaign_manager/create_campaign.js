@@ -1,4 +1,5 @@
 const Player = require("../../../models/PlayerModel");
+const Constants = require('../../../utils/constants.js');
 const Utils = require("../../../utils/utils.js");
 //Here the command starts
 module.exports = {
@@ -12,9 +13,6 @@ module.exports = {
 
   //running the command with the parameters: client, message, args, user, text, prefix
   run: async (client, message, args, user, text, prefix, controllers) => {
-    const createChannel = async (channelName, options) => {
-      return await server.channels.create(channelName, options);
-    };
 
     const setUserAsDM = (user, role) => {
       user.roles.add(role);
@@ -43,7 +41,7 @@ module.exports = {
       const everyone = await message.guild.roles.cache.find((role) => {
         return role.name === "@everyone";
       });
-      const categoryName = `Campaign - ${campaignTitle}`;
+      const categoryName = `💎 Campaign - ${campaignTitle}`;
 
       if (
         !server.channels.cache.find((channel) => channel.name === categoryName)
@@ -67,52 +65,15 @@ module.exports = {
             ],
           })
           .then((category) => {
-            //Generate pre-defined public (only with players) text channels
-            createChannel("schedule", {
-              type: "text",
-              parent: category,
-            });
-            createChannel("announcements", {
-              type: "text",
-              parent: category,
-            });
-            createChannel("off-topic", {
-              type: "text",
-              parent: category,
-            });
-            createChannel("campaign-related-chat", {
-              type: "text",
-              parent: category,
-            });
-            createChannel("session-0", {
-              type: "text",
-              parent: category,
-            });
-            createChannel("rolls", {
-              type: "text",
-              parent: category,
-            });
 
-            //Generate pre-defined private text channels
-            createChannel("dm-commands", {
-              type: "text",
-              parent: category,
-            });
-            createChannel("private-notes", {
-              type: "text",
-              parent: category,
-            });
-
-            //Generate pre-defined public (only with players) voice channels
-            createChannel("Session 0", {
-              type: "voice",
-              parent: category,
-              userLimit: maxPlayers,
-            });
-            createChannel("Private encounter", {
-              type: "voice",
-              parent: category,
-              userLimit: maxPlayers,
+            //Create all predefined channels
+            Constants.ChannelsModelList.forEach(ch => {
+              if (ch.options.type === 'voice') {
+                ch.options = { ...ch.options, parent: category, userLimit: maxPlayers }
+              } else {
+                ch.options = { ...ch.options, parent: category }
+              }
+              Utils.createChannel(server, ch);
             });
           });
       }
