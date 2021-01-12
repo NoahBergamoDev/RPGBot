@@ -5,51 +5,75 @@ module.exports = {
   category: "campaign_manager",
   guildOnly: true,
   cooldown: 2,
-  usage: "delete_campaign <campaign name>",
+  usage: "delete_campaign>",
 
   run: async (client, message, args, user, text, prefix, controllers) => {
-    if (!text || text.length === 0) {
-      return;
-    }
-    const { campaignController } = controllers;
-    let server = message.guild;
-    const categoryName = `campaign - ${text.toLowerCase()}`;
-    const dmRoleName = `dm (${text.toLowerCase()})`;
-    const playerRoleName = `player (${text.toLowerCase()})`;
+    const campaignName = message.channel.parent.name.split("-")[1].trim();
+    const filter = (m) => m.author.id === message.author.id;
 
-    const campaign = await campaignController.findCampaignByTitle(text, user);
+    message.channel
+      .send(
+        `WHAT?! You're leaving me? What have I done? It was my lack of support? It was my awful sense of humor?\n...\n Anyway, are you sure you want to delete "${campaignName}"? (Yes/No)`
+      )
+      .then(() => {
+        message.channel
+          .awaitMessages(filter, {
+            max: 1,
+            time: 30000,
+            errors: ["time"],
+          })
+          .then(async (msg) => {
+            const confirmation = msg.first().content.toLowerCase();
+            if (confirmation !== "y" && confirmation !== "yes") {
+              message.channel.send(
+                `Glad you changed your mind! Campaign not deleted.`
+              );
+              return;
+            }
 
-    if (!campaign) {
-      message.reply(
-        `There's no campaign with the name of "${text}" associated to your username.`
-      );
-      message.delete();
-      return;
-    }
-    const channel = server.channels.cache.find(
-      (channel) => channel.name.toLowerCase() === categoryName
-    );
-    if (!channel) {
-      message.reply(`There's no channel with name of "${text}"`);
-      return;
-    }
-    //Delete Campaign---------
-    campaignController.deleteCampaign(campaign);
+            let server = message.guild;
+            const { campaignController } = controllers;
+            const categoryName = `campaign - ${campaignName.toLowerCase()}`;
+            const dmRoleName = `dm (${campaignName.toLowerCase()})`;
+            const playerRoleName = `player (${campaignName.toLowerCase()})`;
 
-    //Delete Roles------------
-    server.roles.cache
-      .find((role) => role.name.toLowerCase() === dmRoleName)
-      .delete();
-    server.roles.cache
-      .find((role) => role.name.toLowerCase() === playerRoleName)
-      .delete();
-    //Delete Channels---------
-    channel.children.forEach((ch) => ch.delete());
-    //Delete Category---------
-    channel.delete();
+            const campaign = await campaignController.findCampaignByTitle(
+              campaignName,
+              user
+            );
+            if (!campaign) {
+              message.reply(
+                `There's no campaign with the name of "${campaignName}" associated to your username.`
+              );
+              message.delete();
+              return;
+            }
+            const channel = server.channels.cache.find(
+              (channel) => channel.name.toLowerCase() === categoryName
+            );
+            if (!channel) {
+              message.reply(
+                `There's no channel with name of "${campaignName}"`
+              );
+              return;
+            }
+            //Delete Campaign---------
+            campaignController.deleteCampaign(campaign);
 
-    message.reply(`Campaign ${text} deleted.`);
-    // .then((msg) => msg.delete({ timeout: 10000 }));
-    // message.delete();
+            //Delete Roles------------
+            server.roles.cache
+              .find((role) => role.name.toLowerCase() === dmRoleName)
+              .delete();
+            server.roles.cache
+              .find((role) => role.name.toLowerCase() === playerRoleName)
+              .delete();
+            //Delete Channels---------
+            channel.children.forEach((ch) => ch.delete());
+            //Delete Category---------
+            channel.delete();
+
+            message.reply(`Campaign "${text}" deleted.`);
+          });
+      });
   },
 };
