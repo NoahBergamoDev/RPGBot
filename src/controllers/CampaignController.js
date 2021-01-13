@@ -1,4 +1,5 @@
 const Campaign = require("../models/CampaignModel.js");
+const Player = require("../models/PlayerModel.js");
 const { DUNGEONS_N_DRAGONS_5E } = require("../utils/constants.js");
 
 module.exports = class CampaignController {
@@ -35,16 +36,14 @@ module.exports = class CampaignController {
         dmID: userId,
       })
         .save()
-        .then((_) => {
-          this.campaigns.push(dbCampaign);
-          console.log("Campaign created successfully on the database.");
-        })
         .catch((e) => {
           console.log(
             "Error creating a new campaign on the database. Error: ",
             e
           );
         });
+      this.campaigns.push(dbCampaign);
+      console.log("Campaign created successfully on the database.");
     }
 
     if (!localCampaign) {
@@ -67,12 +66,25 @@ module.exports = class CampaignController {
     this.campaigns = campaigns;
   };
 
+  addPlayer = async (campaignId, user) => {
+    const localCampaign = await this.campaigns.find(c => c._id === campaignId);
+    if (!user) {
+      return;
+    }
+    const player = await new Player({
+      discordUser: user,
+      name: user.nickname || user.user.username,
+      characters: []
+    }).save()
+
+    await localCampaign.players.push(player)
+    await Campaign.findByIdAndUpdate(localCampaign._id, { $set: { players: localCampaign.players } }, { useFindAndModify: true });
+
+  }
+
   findCampaignByTitle = async (title, user) => {
     const campaign = await this.campaigns.find((c) => {
-      if (
-        c.title.toLowerCase() == title.toLowerCase() &&
-        c.createdByDiscordID === user.id
-      ) {
+      if (c.title.toLowerCase() == title.toLowerCase()) {
         return c;
       }
       return null;

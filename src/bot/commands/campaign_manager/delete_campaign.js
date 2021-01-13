@@ -37,7 +37,7 @@ module.exports = {
 
             let server = message.guild;
             const { campaignController } = controllers;
-            const categoryName = `campaign - ${campaignName.toLowerCase()}`;
+            const categoryName = `💎 campaign - ${campaignName.toLowerCase()}`;
             const dmRoleName = `dm (${campaignName.toLowerCase()})`;
             const playerRoleName = `player (${campaignName.toLowerCase()})`;
 
@@ -45,7 +45,7 @@ module.exports = {
               campaignName,
               user
             );
-            if (!campaign) {
+            if (!campaign || campaign.createdByDiscordID !== message.author.id) {
               message.reply(
                 `There's no campaign with the name of "${campaignName}" associated to your username.`
               );

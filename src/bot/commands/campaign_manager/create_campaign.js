@@ -1,18 +1,21 @@
 const Player = require("../../../models/PlayerModel");
 const Constants = require('../../../utils/constants.js');
 const Utils = require("../../../utils/utils.js");
-//Here the command starts
+
 module.exports = {
-  //definition
-  name: "create_campaign", //the name of the command
-  category: "campaign_manager", //the category this will be listed at, for the help cmd
-  aliases: ["cc", "new_campaign", "create_new_campaign"], //every parameter can be an alias
-  cooldown: 2, //this will set it to a 2 second cooldown
-  usage: "create_campaign", //this is for the help command for EACH cmd
-  description: "Create a new RPG campaign", //the description of the command
+
+  name: "create_campaign",
+  category: "campaign_manager",
+  aliases: ["cc", "new_campaign", "create_new_campaign"],
+  cooldown: 2,
+  usage: "create_campaign",
+  description: "Create a new RPG campaign",
 
   //running the command with the parameters: client, message, args, user, text, prefix
   run: async (client, message, args, user, text, prefix, controllers) => {
+    if (!message.channel.name.toLowerCase().includes('create-campaign')) {
+      return;
+    }
 
     const setUserAsDM = (user, role) => {
       user.roles.add(role);
@@ -82,7 +85,7 @@ module.exports = {
         `Perfect! All of your channels were automatically created for you. I wish you the best of moments in this campaign!`
       );
     };
-    const { campaignController, serverController } = controllers;
+    const { campaignController } = controllers;
     const filter = (m) => m.author.id === message.author.id;
     const server = message.guild;
 
