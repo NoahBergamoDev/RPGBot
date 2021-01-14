@@ -15,8 +15,8 @@ module.exports = {
     const campaignName = message.channel.parent.name.split("-")[1].trim();
     const filter = (m) => m.author.id === message.author.id;
 
-    message.channel
-      .send(
+    message
+      .reply(
         `WHAT?! You're leaving me? What have I done? It was my lack of support? It was my awful sense of humor?\n...\n Anyway, are you sure you want to delete "${campaignName}"? (Yes/No)`
       )
       .then(() => {

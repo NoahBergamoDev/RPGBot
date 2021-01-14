@@ -29,12 +29,15 @@ module.exports = {
                 const campaignName = parentName.substr(parentName.indexOf('- ') + 1).trim()
 
                 if (!mentionedMember) {
-                    msg.reply("Sorry, there's no user with the name ")
+                    message.reply("Sorry, there's no user with this name ")
+                    return;
                 }
                 const campaign = await campaignController.findCampaignByTitle(campaignName);
-                campaignController.addPlayer(campaign._id, mentionedMember);
-
-
+                if (campaign.players.find(p => p === mentionedMember.id)) {
+                    message.reply(`By my calculations, <@${mentionedMember.id}> is already in your campaign.`)
+                    return;
+                }
+                campaignController.addPlayer(campaign._id, mentionedMember.id, (mentionedMember.nickname || mentionedMember.user.username));
             })
 
         })

@@ -11,6 +11,7 @@ module.exports = class CampaignController {
 
   createCampaign = async (serverId, title, maxOfPlayers, userId) => {
     let dbCampaign = await Campaign.findOne({ title: title });
+
     let localCampaign = null;
     if (dbCampaign) {
       console.log("There's already a campaign with this name.");
@@ -66,20 +67,23 @@ module.exports = class CampaignController {
     this.campaigns = campaigns;
   };
 
-  addPlayer = async (campaignId, user) => {
+  addPlayer = async (campaignId, userId, nickname) => {
     const localCampaign = await this.campaigns.find(c => c._id === campaignId);
-    if (!user) {
+    if (!userId) {
       return;
     }
-    const player = await new Player({
-      discordUser: user,
-      name: user.nickname || user.user.username,
-      characters: []
-    }).save()
 
-    await localCampaign.players.push(player)
+    let player = await Player.findOne({ discordUser: userId });
+    if (!player) {
+      player = await new Player({
+        discordUser: userId,
+        name: nickname,
+        characters: []
+      }).save()
+    }
+
+    await localCampaign.players.push(userId)
     await Campaign.findByIdAndUpdate(localCampaign._id, { $set: { players: localCampaign.players } }, { useFindAndModify: true });
-
   }
 
   findCampaignByTitle = async (title, user) => {
